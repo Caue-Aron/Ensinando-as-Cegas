@@ -1,0 +1,199 @@
+local input_acquired = true
+
+local function acquire()
+  input_acquired = true
+end
+
+local function release()
+  input_acquired = false
+end
+
+local pontos = 0
+local pontos_max_fase1 = 15
+local pontos_max_fase2 = 20
+local nova_sequencia = hash('n')
+local sequencia = {}
+local teclas_pressionadas = 0
+local qntd_sequencia = 1
+
+local teclas_audio = {
+  '#anelard',
+  '#anelare',
+  '#g',
+  '#h',
+  '#indicadord',
+  '#indicadore',
+  '#mediod',
+  '#medioe',
+  '#mindinhoe',
+  '#mindinhod',
+  '#POLEGARES',
+}
+
+local teclas = {
+  ['L'] = teclas_audio[1],
+  ['S'] = teclas_audio[2],
+  ['G'] = teclas_audio[3],
+  ['H'] = teclas_audio[4],
+  ['J'] = teclas_audio[5],
+  ['F'] = teclas_audio[6],
+  ['K'] = teclas_audio[7],
+  ['D'] = teclas_audio[8],
+  ['A'] = teclas_audio[9],
+  ['CEDILHA'] = teclas_audio[10],
+  ['barra'] = teclas_audio[11],
+}
+
+local function onEnable()  
+  release()
+  msg.post('.', hash('acquire_input_focus'))
+
+  math.randomseed(os.time())
+  math.random()
+  math.random()
+  math.random()
+
+  play('#intro', function ()
+    play('/UI#este som correto', function ()
+      play_correct(function ()
+        play('/UI#este som errado', function ()
+          play_wrong(function ()
+            play_vamos(function ()
+              msg.post(".", nova_sequencia)
+              acquire()
+            end)
+          end)
+        end)
+      end)
+    end)
+  end)
+end
+
+local function onNovaSequencia()
+  release()
+  sequencia = {}
+  local position = 1
+  for i=1, qntd_sequencia do
+    local rand = math.random(1, #teclas_audio)
+    sequencia[i] = teclas_audio[rand]
+  end
+
+  function a(position)
+    if sequencia[position] then
+
+      print(sequencia[position])
+
+      if position == 1 then
+        play_pressione(function ()
+          play(sequencia[position], function ()
+            a(position+1)
+          end)
+        end)
+
+      else
+        play_e(function ()
+          play(sequencia[position], function ()
+            a(position+1)
+          end)
+        end)
+
+      end
+
+    else
+      acquire()
+    end
+  end
+
+  a(position)
+end
+
+local f_msgs = {
+  [hash('enable')] = onEnable,
+  [nova_sequencia] = onNovaSequencia,
+}
+
+function on_message(self, message_id)
+  if f_msgs[message_id] then
+    f_msgs[message_id]()
+  else
+    print('sem implementação para ' .. message_id .. ' em desafio1')
+  end
+end
+
+function on_input(self, action_id, action)
+  if action_id == keys.ESC then
+    msg.post('.', hash('release_input_focus'))
+
+    sound.stop()
+
+    msg.post(urls.MANAGER, msgs.LOAD_MENU_INICIAL)
+    msg.post('.', hash('disable'))
+    return
+  end
+
+  if input_acquired then
+    if action.text then
+      release()
+      local tecla_certa = sequencia[1]
+      local txt = string.upper(action.text)
+      
+      if txt == 'ç' then
+        txt = 'CEDILHA'
+        
+      elseif txt == ' ' then
+        txt = 'barra'
+
+      end
+
+      if teclas[txt] == tecla_certa then
+        teclas_pressionadas = teclas_pressionadas + 1
+        table.remove(sequencia, 1)
+
+        play('#' .. txt, function ()
+          play_correct(function ()
+
+            if teclas_pressionadas == qntd_sequencia then
+              teclas_pressionadas = 0
+              pontos = pontos + 1
+
+              if pontos == pontos_max_fase1 then
+                play_coisas(function ()
+                  qntd_sequencia = 2
+                  msg.post(".", nova_sequencia)
+                end)
+
+                return
+
+              elseif pontos == pontos_max_fase2 then
+                release()
+
+                play('#fase 1 concluida', function ()
+                  t = ser.load('config')
+                  t.fase_atual = 2
+                  ser.save(t, 'config')
+                  msg.post(urls.MANAGER, msgs.LOAD_MENU_INICIAL)
+                  msg.post('.', hash('disable'))
+                end)
+
+                return
+              end
+
+              msg.post(".", nova_sequencia)
+            end
+            
+            acquire()
+          end)
+        end)
+
+      else
+        play_wrong( function ()
+          msg.post('.', nova_sequencia)
+        end)
+      end  
+    end
+  end
+end
+
+function init(self)
+  msg.post(".", hash('disable'))
+end

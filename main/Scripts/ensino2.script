@@ -1,0 +1,480 @@
+local input_acquired = true
+
+local function acquire()
+  input_acquired = true
+end
+
+local function release()
+  input_acquired = false
+end
+
+local fencontrado = false
+local jencontrado = false
+local aencontrado = false
+local cencontrado = false
+
+local TECLA_ERRADA = "ensino2#0"
+local audio_to_play = ""
+local timer_handler 
+local DELAY = 3
+local current_state
+local run_callback = true
+
+local function callback()
+  if run_callback then
+    play(audio_to_play, function ()
+      timer_handler = timer.delay(DELAY, false, callback)
+    end)
+  end
+  
+  run_callback = true
+end
+
+local function startTimer()
+  run_callback = true
+  timer_handler = timer.delay(DELAY, false, callback)
+end
+
+local function cancelTimer()
+  run_callback = false
+  timer.cancel(timer_handler)
+  sound.stop(audio_to_play)
+end
+
+local states = {
+  encontrandoFJ = 'fj',
+  encontrandoAC = 'ac',
+  encontrandoZ = 'z',
+  encontrandoX = 'x',
+  encontrandoC = 'c',
+  encontrandoV = 'v',
+  encontrandoJ = 'j',
+  encontrandon = 'n',
+  encontrandob = 'b',
+  encontrandom = 'm',
+  encontrandop = 'p',
+}
+
+--************************************************************************************************************
+local function audio_encontraFeJ()
+  msg.post('.', hash('acquire_input_focus'))
+  play("ensino2#1", function()
+    play("ensino2#2", function ()
+      audio_to_play = "ensino2#2"
+      startTimer()
+      current_state = states.encontrandoFJ
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontraAeCedilha()
+  play("ensino2#3", function()
+    play("ensino2#4", function ()
+      audio_to_play = "ensino2#4"
+      startTimer()
+      current_state = states.encontrandoAC
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontraZ()
+  msg.post('.', hash('acquire_input_focus'))
+  play("ensino2#5", function()
+    play("ensino2#6", function ()
+      audio_to_play = "ensino2#6"
+      startTimer()
+      current_state = states.encontrandoZ
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontraX()
+  play("ensino2#9", function()
+    play("ensino2#10", function ()
+      audio_to_play = "ensino2#10"
+      startTimer()
+      current_state = states.encontrandoX
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontraC()
+  play("ensino2#11", function()
+    play("ensino2#12", function ()
+      audio_to_play = "ensino2#12"
+      startTimer()
+      current_state = states.encontrandoC
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontraV()
+  play("ensino2#13", function()
+    play("ensino2#14", function ()
+      audio_to_play = "ensino2#14"
+      startTimer()
+      current_state = states.encontrandoV
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontraJ()
+  play("ensino2#15", function()
+    play("ensino2#16", function ()
+      audio_to_play = "ensino2#16"
+      startTimer()
+      current_state = states.encontrandoJ
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontran()
+  msg.post('.', hash('acquire_input_focus'))
+  play("ensino2#17", function()
+    play("ensino2#18", function ()
+      audio_to_play = "ensino2#18"
+      startTimer()
+      current_state = states.encontrandon
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontrab()
+  play("ensino2#21", function()
+    play("ensino2#22", function ()
+      audio_to_play = "ensino2#22"
+      startTimer()
+      current_state = states.encontrandob
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontram()
+  play("ensino2#23", function()
+    play("ensino2#24", function ()
+      audio_to_play = "ensino2#24"
+      startTimer()
+      current_state = states.encontrandom
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontrap()
+  msg.post('.', hash('acquire_input_focus'))
+  play("ensino2#25", function()
+    play("ensino2#26", function ()
+      audio_to_play = "ensino2#26"
+      startTimer()
+      current_state = states.encontrandop
+      acquire()
+    end)
+  end)
+end
+
+local function fim()
+  play("ensino2#27", function()
+    msg.post(urls.FASE, msgs.ENSINO_DADO)
+    msg.post('.', hash('disable'))
+  end)
+end
+
+local l_msgs = {
+  FJencontrado = hash('fj'),
+  ACencontrado = hash('ac'),
+  Zencontrado = hash('z'),
+  Xencontrado = hash('x'),
+  Cencontrado = hash('c'),
+  Vencontrado = hash('v'),
+  Jencontrado = hash('j'),
+  nencontrado = hash('n'),
+  bencontrado = hash('b'),
+  mencontrado = hash('m'),
+  pencontrado = hash('p'),
+}
+
+local f_msgs = {
+  [hash('enable')] = audio_encontraFeJ,
+  [l_msgs.FJencontrado] = audio_encontraAeCedilha,
+  [l_msgs.ACencontrado] = audio_encontraZ,
+  [l_msgs.Zencontrado] = audio_encontraX,
+  [l_msgs.Xencontrado] = audio_encontraC,
+  [l_msgs.Cencontrado] = audio_encontraV,
+  [l_msgs.Vencontrado] = audio_encontraJ,
+  [l_msgs.Jencontrado] = audio_encontran,
+  [l_msgs.nencontrado] = audio_encontrab,
+  [l_msgs.bencontrado] = audio_encontram,
+  [l_msgs.mencontrado] = audio_encontrap,
+  [l_msgs.pencontrado] = fim,
+}
+
+--############################################################################################################
+
+local function inputEncontraFJ(key)
+  if key == "f" then
+    print('-F- ENCONTRADO')
+    fencontrado = true
+
+    if jencontrado then
+      cancelTimer()
+      release()
+      msg.post(".", l_msgs.FJencontrado)
+    end
+    
+    return true
+
+  elseif key == "j" then
+    print('-J- ENCONTRADO')
+    jencontrado = true
+
+    if fencontrado then
+      cancelTimer()
+      release()
+      msg.post(".", l_msgs.FJencontrado)
+    end
+
+    return true
+  end
+
+  return false
+end
+
+local function inputEncontraAC(key)
+  if key == "a" then
+    print('-A- ENCONTRADO')
+    aencontrado = true
+
+    if cencontrado then
+      cancelTimer()
+      release()
+      msg.post(".", l_msgs.ACencontrado)
+    end
+    
+    return true
+
+  elseif key == "ç" then
+    print('-Ç- ENCONTRADO')
+    cencontrado = true
+
+    if aencontrado then
+      cancelTimer()
+      release()
+      msg.post(".", l_msgs.ACencontrado)
+    end
+
+    return true
+  end
+  
+  return false
+end
+
+local function inputEncontraZ(key)
+  msg.post('.', hash('acquire_input_focus'))
+  if key == "z" then
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.Zencontrado)
+    
+    return true
+
+  elseif key == "\\" then
+    cancelTimer()
+    release()
+    play("ensino2#7", function()
+      play("ensino2#8", function()
+        audio_to_play = "ensino2#8"
+        startTimer()
+        acquire()
+      end)
+    end)
+
+    return true
+  end
+  
+  return false
+end
+
+local function inputEncontraX(key)
+  if key == "x" then
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.Xencontrado)
+    
+    return true
+  end
+  
+  return false
+end
+
+local function inputEncontraC(key)
+  if key == "c" then
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.Cencontrado)
+    
+    return true
+  end
+  
+  return false
+end
+
+local function inputEncontraV(key)
+  if key == "v" then
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.Vencontrado)
+    
+    return true
+  end
+  
+  return false
+end
+
+local function inputEncontraJ(key)
+  if key == "j" then
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.Jencontrado)
+    
+    return true
+  end
+  
+  return false
+end
+
+local function inputEncontran(key)
+  if key == "n" then
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.nencontrado)
+    
+    return true
+
+  elseif key == "m" then
+    cancelTimer()
+    release()
+    play("ensino2#19", function()
+      play("ensino2#20", function()
+        audio_to_play = "ensino2#20"
+        startTimer()
+        acquire()
+      end)
+    end)
+
+    return true
+  end
+  
+  return false
+end
+
+local function inputEncontrab(key)
+  if key == "b" then
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.bencontrado)
+    
+    return true
+  end
+  
+  return false
+end
+
+local function inputEncontram(key)
+  if key == "m" then
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.mencontrado)
+    
+    return true
+  end
+  
+  return false
+end
+
+local function inputEncontrap(key)
+  if key == " " then
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.pencontrado)
+    
+    return true
+  end
+  
+  return false
+end
+
+local input = {
+  [states.encontrandoFJ] = inputEncontraFJ,
+  [states.encontrandoAC] = inputEncontraAC,
+  [states.encontrandoZ] = inputEncontraZ,
+  [states.encontrandoX] = inputEncontraX,
+  [states.encontrandoC] = inputEncontraC,
+  [states.encontrandoV] = inputEncontraV,
+  [states.encontrandoJ] = inputEncontraJ,
+  [states.encontrandon] = inputEncontran,
+  [states.encontrandob] = inputEncontrab,
+  [states.encontrandom] = inputEncontram,
+  [states.encontrandop] = inputEncontrap,
+}
+
+-- // --
+function on_input(self, action_id, action)
+  if action_id == keys.ESC and action.pressed then
+    msg.post('.', hash('release_input_focus'))
+
+    sound.stop()
+    if timer_handler then
+      cancelTimer()
+    end
+    msg.post(urls.MANAGER, msgs.LOAD_MENU_INICIAL)
+    msg.post('.', hash('disable'))
+
+    return
+  end
+
+  if input_acquired then
+    if action_id == keys.TYPE then
+      print(action.text)
+
+      local success = true
+      
+      success = input[current_state](action.text)
+
+      if not success then
+        cancelTimer()
+        release()
+        play(TECLA_ERRADA, function()
+          startTimer()
+          acquire()
+        end)
+      end
+
+    end
+
+  end
+
+end
+
+function on_message(self, message_id, message, sender)
+  if message_id == hash("enable") then
+    print(sender)    
+  end
+
+  if f_msgs[message_id] then
+    f_msgs[message_id]()
+  end
+end
+
+function init(self)
+  release()
+  msg.post('.', 'disable')
+end

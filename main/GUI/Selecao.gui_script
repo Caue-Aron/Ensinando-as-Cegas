@@ -1,0 +1,98 @@
+local selecao = 1
+local pressionado = false
+local my_sender = "none"
+
+local FASE1
+local FASE2
+local FASE3
+local FASE4
+local FASE5
+local INFINITO
+
+local FASE1_SOUND 
+local FASE2_SOUND 
+local FASE3_SOUND 
+local FASE4_SOUND 
+local FASE5_SOUND 
+local INFINITO_SOUND 
+local VOLTAR_SOUND 
+
+local function fase1()
+  msg.post(".", "release_input_focus")
+
+  gui.animate(gui.get_node("botoes"), "color", vmath.vector4(1, 1, 1, 0), gui.EASING_LINEAR, 0.4, 0, function ()
+    msg.post(urls.MANAGER, msgs.LOAD_FASE, {fase = 1})
+  end)
+end
+
+local function fase2()
+  msg.post(".", "release_input_focus")
+
+  gui.animate(gui.get_node("botoes"), "color", vmath.vector4(1, 1, 1, 0), gui.EASING_LINEAR, 0.4, 0, function ()
+    msg.post(urls.MANAGER, msgs.LOAD_FASE, {fase = 2})
+  end)
+end
+
+local function fase3()
+  print('fase3')
+end
+
+local function fase4()
+  print('fase4')
+end
+
+local function fase5()
+  print('fase5')
+end
+
+local function infinito()
+  print('infinito')
+end
+
+local function voltar()
+  sound.stop(VOLTAR_SOUND)
+  msg.post(my_sender, "enable")
+  msg.post(".", "disable")
+  gui.set_color(gui.get_node("botoes"), vmath.vector4(1, 1, 1, 0))
+  return true
+end
+
+function init(self)
+  gui.set_color(gui.get_node("botoes"), vmath.vector4(1, 1, 1, 0))
+  
+  FASE1 = gui.get_node("fase1/box")
+  FASE2 = gui.get_node("fase2/box")
+  FASE3 = gui.get_node("fase3/box")
+  FASE4 = gui.get_node("fase4/box")
+  FASE5 = gui.get_node("fase5/box")
+  INFINITO = gui.get_node("infinito/box")
+  VOLTAR = gui.get_node("voltar/box")
+
+  FASE1_SOUND = msg.url("/selecao_de_fases#fase1")
+  FASE2_SOUND = msg.url("/selecao_de_fases#fase2")
+  FASE3_SOUND = msg.url("/selecao_de_fases#fase3")
+  FASE4_SOUND = msg.url("/selecao_de_fases#fase4")
+  FASE5_SOUND = msg.url("/selecao_de_fases#fase5")
+  INFINITO_SOUND = msg.url("/selecao_de_fases#infinito")
+  VOLTAR_SOUND = msg.url("/selecao_de_fases#voltar")
+
+  menu.first_time_menu(FASE1)
+end
+
+function on_message(self, message_id, message, sender)
+  if message_id == hash("enable") then
+    msg.post(".", "acquire_input_focus")
+    my_sender = sender
+    play(FASE1_SOUND)
+    gui.animate(gui.get_node("botoes"), "color", vmath.vector4(1, 1, 1, 1), gui.EASING_LINEAR, 0.4, 0)
+  end
+end
+
+function on_input(self, action_id, action)
+  if (action_id ~= hash("clique") and action_id ~= nil) and action.pressed or action.released then    
+    selecao, pressionado = menu.key_move(selecao, pressionado, action_id, action,
+                            {fase1, fase2, fase3, fase4, fase5, infinito, voltar}, 
+                            {FASE1, FASE2, FASE3, FASE4, FASE5, INFINITO, VOLTAR},
+                            {FASE1_SOUND, FASE2_SOUND, FASE3_SOUND, FASE4_SOUND, FASE5_SOUND, INFINITO_SOUND, VOLTAR_SOUND})
+  end
+end

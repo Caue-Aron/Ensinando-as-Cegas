@@ -1,0 +1,36 @@
+key_trigger {
+  input: KEY_UP
+  action: "cima"
+}
+key_trigger {
+  input: KEY_LEFT
+  action: "esquerda"
+}
+key_trigger {
+  input: KEY_RIGHT
+  action: "direita"
+}
+key_trigger {
+  input: KEY_DOWN
+  action: "baixo"
+}
+key_trigger {
+  input: KEY_SPACE
+  action: "press"
+}
+key_trigger {
+  input: KEY_ENTER
+  action: "press"
+}
+key_trigger {
+  input: KEY_ESC
+  action: "esc"
+}
+mouse_trigger {
+  input: MOUSE_BUTTON_1
+  action: "clique"
+}
+text_trigger {
+  input: TEXT
+  action: "type"
+}

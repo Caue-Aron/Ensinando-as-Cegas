@@ -1,0 +1,693 @@
+local input_acquired = true
+
+local function acquire()
+  input_acquired = true
+end
+
+local function release()
+  input_acquired = false
+end
+
+local TECLA_ERRADA = "ensino1#3"
+local audio_to_play = ""
+local timer_handler 
+local DELAY = 3
+local current_state
+local run_callback = true
+
+local function callback()
+  if run_callback then
+    play(audio_to_play, function ()
+      timer_handler = timer.delay(DELAY, false, callback)
+    end)
+  end
+  
+  run_callback = true
+end
+
+local function startTimer()
+  run_callback = true
+  timer_handler = timer.delay(DELAY, false, callback)
+end
+
+local function cancelTimer()
+  run_callback = false
+  timer.cancel(timer_handler)
+  sound.stop(audio_to_play)
+end
+
+local states = {
+  encontrando_f = 'f',
+  encontrando_g = 'g',
+  encontrando_j = 'j',
+  encontrando_a = 'a',
+  encontrando_s = 's',
+  encontrando_d = 'd',
+  encontrando_g_dnv = 'gdnv',
+  encontrando_cedilha = 'ced',
+  encontrando_l = 'l',
+  encontrando_k = 'k',
+  encontrando_h = 'h',
+  encontrando_a_dnv = 'adnv',
+  encontrando_s_dnv = 'sdnv',
+  encontrando_d_dnv = 'ddnv',
+  encontrando_f_dnv = 'fdnv',
+  encontrando_g_dnvmaisumavez = 'gdnvmuv',
+  encontrando_ced_dnv = 'ceddnv',
+  encontrando_l_dnv = 'ldnv',
+  encontrando_k_dnv = 'kdnv',
+  encontrando_j_dnv = 'jdnv',
+  encontrando_h_dnv = 'hdnv',
+  encontrando_bar_dnv = 'bardnv',
+  fim = 'fim',
+}
+
+--************************************************************************************************************
+local function audio_encontraF()
+  msg.post('.', hash('acquire_input_focus'))
+  play("ensino1#INTRO", function()
+    play("ensino1#1", function ()
+      play("ensino1#2", function ()
+        audio_to_play = "ensino1#2"
+        startTimer()
+        current_state = states.encontrando_f
+        acquire()
+      end)
+    end)
+  end)
+end
+
+local function audio_encontraJ()
+  play("ensino1#8", function()
+    audio_to_play = "ensino1#8"
+    startTimer()
+    current_state = states.encontrando_j
+    acquire()
+  end)
+end
+
+local function audio_encontraG()
+  play("ensino1#5", function()
+    play("ensino1#6", function ()
+      audio_to_play = "ensino1#6"
+      startTimer()
+      current_state = states.encontrando_g
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontraA()
+  play("ensino1#9", function()
+    play("ensino1#10", function ()
+      play("ensino1#11", function ()
+        audio_to_play = "ensino1#11"
+        startTimer()
+        current_state = states.encontrando_a
+        acquire() 
+      end)
+    end)
+  end)
+end
+
+local function audio_encontraS()
+  play("ensino1#12", function()
+    play("ensino1#13", function ()
+      audio_to_play = "ensino1#13"
+      startTimer()
+      current_state = states.encontrando_s
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontraD()
+  play("ensino1#14", function()
+    play("ensino1#15", function ()
+      audio_to_play = "ensino1#15"
+      startTimer()
+      current_state = states.encontrando_d
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontraGdnv()
+  play("ensino1#16", function()
+    play("ensino1#17", function ()
+      audio_to_play = "ensino1#17"
+      startTimer()
+      current_state = states.encontrando_g_dnv
+      acquire()
+    end)
+  end)
+end
+
+local function audio_encontraCedilha()
+  play("ensino1#18", function()
+    audio_to_play = "ensino1#18"
+    startTimer()
+    current_state = states.encontrando_cedilha
+    acquire()
+  end)
+end
+
+local function audio_encontraL()
+  play("ensino1#19", function()
+    audio_to_play = "ensino1#19"
+    startTimer()
+    current_state = states.encontrando_l
+    acquire()
+  end)
+end
+
+local function audio_encontraK()
+  play("ensino1#20", function()
+    audio_to_play = "ensino1#20"
+    startTimer()
+    current_state = states.encontrando_k
+    acquire()
+  end)
+end
+
+local function audio_encontraH()
+  play("ensino1#21", function()
+    audio_to_play = "ensino1#21"
+    startTimer()
+    current_state = states.encontrando_h
+    acquire()
+  end)
+end
+
+local function audio_encontraAdnv()
+  play("ensino1#22", function()
+    audio_to_play = "ensino1#22"
+    startTimer()
+    current_state = states.encontrando_a_dnv
+    acquire()
+  end)
+end
+
+local function audio_encontraSdnv()
+  play("ensino1#23", function()
+    audio_to_play = "ensino1#23"
+    startTimer()
+    current_state = states.encontrando_s_dnv
+    acquire()
+  end)
+end
+
+local function audio_encontraDdnv()
+  play("ensino1#29", function()
+    audio_to_play = "ensino1#29"
+    startTimer()
+    current_state = states.encontrando_d_dnv
+    acquire()
+  end)
+end
+
+local function audio_encontraFdnv()
+  play("ensino1#24", function()
+    audio_to_play = "ensino1#24"
+    startTimer()
+    current_state = states.encontrando_f_dnv
+    acquire()
+  end)
+end
+
+local function audio_encontraGdnvmaisumavez()
+  play("ensino1#25", function()
+    audio_to_play = "ensino1#25"
+    startTimer()
+    current_state = states.encontrando_g_dnvmaisumavez
+    acquire()
+  end)
+end
+
+local function audio_encontraCedilhadnv()
+  play("ensino1#26", function()
+    audio_to_play = "ensino1#26"
+    startTimer()
+    current_state = states.encontrando_ced_dnv
+    acquire()
+  end)
+end
+
+local function audio_encontraLdnv()
+  play("ensino1#27", function()
+    audio_to_play = "ensino1#27"
+    startTimer()
+    current_state = states.encontrando_l_dnv
+    acquire()
+  end)
+end
+
+local function audio_encontraKdnv()
+  play("ensino1#28", function()
+    audio_to_play = "ensino1#28"
+    startTimer()
+    current_state = states.encontrando_k_dnv
+    acquire()
+  end)
+end
+
+local function audio_encontraJdnv()
+  play("ensino1#30", function()
+    audio_to_play = "ensino1#30"
+    startTimer()
+    current_state = states.encontrando_j_dnv
+    acquire()
+  end)
+end
+
+local function audio_encontraHdnv()
+  play("ensino1#31", function()
+    audio_to_play = "ensino1#31"
+    startTimer()
+    current_state = states.encontrando_h_dnv
+    acquire()
+  end)
+end
+
+local function audio_encontraBardnv()
+  play("ensino1#32", function()
+    audio_to_play = "ensino1#32"
+    startTimer()
+    current_state = states.encontrando_bar_dnv
+    acquire()
+  end)
+end
+
+local function audio_fim()
+  play("ensino1#33", function()
+    msg.post(urls.FASE, msgs.ENSINO_DADO)
+    msg.post('.', hash('disable'))
+  end)
+end
+
+local l_msgs = {
+  g_encontrado_dnvmaisumavez =      hash("gdnvmuv"),
+  f_encontrado =          hash("f"),
+  g_encontrado =          hash("g"),
+  j_encontrado =          hash("j"),
+  a_encontrado =          hash("a"),
+  s_encontrado =          hash("s"),
+  d_encontrado =          hash("d"),
+  g_encontrado_dnv =      hash("gdnv"),
+  cedilha_encontrado =    hash("ced"),
+  l_encontrado =          hash("l"),
+  k_encontrado =          hash("k"),
+  h_encontrado =          hash("h"),
+  a_encontrado_dnv =      hash("adnv"),
+  s_encontrado_dnv =      hash("sdnv"),
+  d_encontrado_dnv =      hash("ddnv"),
+  f_encontrado_dnv =      hash("fdnv"),
+  ced_encontrado_dnv =    hash("ceddnv"),
+  l_encontrado_dnv =      hash("ldnv"),
+  k_encontrado_dnv =      hash("kdnv"),
+  j_encontrado_dnv =      hash("jdnv"),
+  h_encontrado_dnv =      hash("hdnv"),
+  bar_encontrado_dnv =      hash("bardnv"),
+}
+
+local f_msgs = {
+  [hash('enable')]      =         audio_encontraF,
+  [l_msgs.f_encontrado] =         audio_encontraG,
+  [l_msgs.g_encontrado] =         audio_encontraJ,
+  [l_msgs.j_encontrado] =         audio_encontraA,
+  [l_msgs.a_encontrado] =         audio_encontraS,
+  [l_msgs.s_encontrado] =         audio_encontraD,
+  [l_msgs.d_encontrado] =         audio_encontraGdnv,
+  [l_msgs.g_encontrado_dnv] =     audio_encontraCedilha,
+  [l_msgs.cedilha_encontrado] =   audio_encontraL,
+  [l_msgs.l_encontrado] =         audio_encontraK,
+  [l_msgs.k_encontrado] =         audio_encontraH,
+  [l_msgs.h_encontrado] =         audio_encontraAdnv,
+  [l_msgs.a_encontrado_dnv] =     audio_encontraSdnv,
+  [l_msgs.s_encontrado_dnv] =     audio_encontraDdnv,
+  [l_msgs.d_encontrado_dnv] =     audio_encontraFdnv,
+  [l_msgs.f_encontrado_dnv] =     audio_encontraGdnvmaisumavez,
+  [l_msgs.g_encontrado_dnvmaisumavez] = audio_encontraCedilhadnv,
+  [l_msgs.ced_encontrado_dnv] =   audio_encontraLdnv,
+  [l_msgs.l_encontrado_dnv] =   audio_encontraKdnv,
+  [l_msgs.k_encontrado_dnv] =   audio_encontraJdnv,
+  [l_msgs.j_encontrado_dnv] =   audio_encontraHdnv,
+  [l_msgs.h_encontrado_dnv] =   audio_encontraBardnv,
+  [l_msgs.bar_encontrado_dnv] = audio_fim,
+}
+
+--############################################################################################################
+
+local function input_encontraF(key)
+  if key == "f" then
+    print('-F- ENCONTRADO', 'ENCONTRANDO -G-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.f_encontrado)
+    return true
+
+  elseif key == "j" then
+    cancelTimer()
+    release()
+    play("ensino1#4", function()
+      acquire()
+      startTimer()
+    end)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraG(key)
+  if key == "g" then
+    print('-G- ENCONTRADO', 'ENCONTRANDO -J-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.g_encontrado)
+    return true
+
+  elseif key == "j" then
+    cancelTimer()
+    release()
+    play("ensino1#7", function()
+      acquire()
+      startTimer()
+    end)
+    return true
+
+  end
+
+  return false
+end
+
+local function input_encontraJ(key)
+  if key == "j" then
+    print('-J- ENCONTRADO', 'ENCONTRANDO -A-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.j_encontrado)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraA(key)
+  if key == "a" then
+    print('-A- ENCONTRADO', 'ENCONTRANDO -S-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.a_encontrado)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraS(key)
+  if key == "s" then
+    print('-S- ENCONTRADO', 'ENCONTRANDO -D-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.s_encontrado)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraD(key)
+  if key == "d" then
+    print('-D- ENCONTRADO', 'ENCONTRANDO -G-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.d_encontrado)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraGdnv(key)
+  if key == "g" then
+    print('-G- ENCONTRADO', 'ENCONTRANDO -Ç-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.g_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraCedilha(key)
+  if key == "ç" then
+    print('-Ç- ENCONTRADO', 'ENCONTRANDO -L-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.cedilha_encontrado)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraL(key)
+  if key == "l" then
+    print('-L- ENCONTRADO', 'ENCONTRANDO -K-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.l_encontrado)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraK(key)
+  if key == "k" then
+    print('-K- ENCONTRADO', 'ENCONTRANDO -H-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.k_encontrado)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraH(key)
+  if key == "h" then
+    print('-H- ENCONTRADO')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.h_encontrado)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraAdnv(key)
+  if key == "a" then
+    print('-A-', '-S-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.a_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraSdnv(key)
+  if key == "s" then
+    print('-S-', '-D-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.s_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraDdnv(key)
+  if key == "d" then
+    print('-D-', '-F-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.d_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraFdnv(key)
+  if key == "f" then
+    print('-F-', '-G-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.f_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraGdnvmaisumavez(key)
+  if key == "g" then
+    print('-G-', '-Ç-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.g_encontrado_dnvmaisumavez)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraCedilhadnv(key)
+  if key == "ç" then
+    print('-Ç-', '-L-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.ced_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraLdnv(key)
+  if key == "l" then
+    print('-L-', '-K-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.l_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraKdnv(key)
+  if key == "k" then
+    print('-K-', '-J-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.k_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraJdnv(key)
+  if key == "j" then
+    print('-J-', '-H-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.j_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraHdnv(key)
+  if key == "h" then
+    print('-H-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.h_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local function input_encontraBardnv(key)
+  if key == " " then
+    print('-BAR-')
+    cancelTimer()
+    release()
+    msg.post(".", l_msgs.bar_encontrado_dnv)
+    return true
+  end
+
+  return false
+end
+
+local input = {
+  [states.encontrando_f] = input_encontraF,
+  [states.encontrando_g] = input_encontraG,
+  [states.encontrando_j] = input_encontraJ,
+  [states.encontrando_a] = input_encontraA,
+  [states.encontrando_s] = input_encontraS,
+  [states.encontrando_d] = input_encontraD,
+  [states.encontrando_g_dnv] = input_encontraGdnv,
+  [states.encontrando_cedilha] = input_encontraCedilha,
+  [states.encontrando_l] = input_encontraL,
+  [states.encontrando_k] = input_encontraK,
+  [states.encontrando_h] = input_encontraH,
+  [states.encontrando_a_dnv] = input_encontraAdnv,
+  [states.encontrando_s_dnv] = input_encontraSdnv,
+  [states.encontrando_d_dnv] = input_encontraDdnv,
+  [states.encontrando_f_dnv] = input_encontraFdnv,
+  [states.encontrando_g_dnvmaisumavez] = input_encontraGdnvmaisumavez,
+  [states.encontrando_ced_dnv] = input_encontraCedilhadnv,
+  [states.encontrando_l_dnv] = input_encontraLdnv,
+  [states.encontrando_k_dnv] = input_encontraKdnv,
+  [states.encontrando_j_dnv] = input_encontraJdnv,
+  [states.encontrando_h_dnv] = input_encontraHdnv,
+  [states.encontrando_bar_dnv] = input_encontraBardnv,
+}
+
+-- // --
+function on_input(self, action_id, action)
+  if action_id == keys.ESC and action.pressed then
+    msg.post('.', hash('release_input_focus'))
+    input_acquired = false
+
+    sound.stop()
+    if timer_handler then
+      cancelTimer()
+    end
+    msg.post(urls.MANAGER, msgs.LOAD_MENU_INICIAL)
+    msg.post('.', hash('disable'))
+
+    return
+  end
+
+  if input_acquired then
+    if action_id == keys.TYPE then
+      local success = true
+      
+      success = input[current_state](action.text)
+
+      if not success then
+        cancelTimer()
+        release()
+        play(TECLA_ERRADA, function()
+          startTimer()
+          acquire()
+        end)
+      end
+
+    end
+  end
+end
+
+function on_message(self, message_id)
+  if f_msgs[message_id] then
+    f_msgs[message_id]()
+  end
+end
+
+function init(self)
+  release()
+  msg.post('.', 'disable')
+end

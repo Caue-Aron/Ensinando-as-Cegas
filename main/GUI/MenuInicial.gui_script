@@ -1,0 +1,79 @@
+local selecao = 1
+local pressionado = false
+
+local RESUMIR 
+local SELECAO 
+local CONFIGURACOES 
+local SAIR 
+
+local RESUMIR_SOUND 
+local SELECAO_SOUND 
+local CONFIGURACOES_SOUND 
+local SAIR_SOUND 
+
+local function continuar_jogo()
+  msg.post(".", "release_input_focus")
+
+  gui.animate(gui.get_node("botoes"), "color", vmath.vector4(1, 1, 1, 0), gui.EASING_LINEAR, 0.4, 0, function ()
+    msg.post(urls.MANAGER, msgs.LOAD_FASE)
+  end)
+end
+
+local function selecao_fases()
+  sound.stop(SELECAO_SOUND)
+  msg.post("/Selecao#Selecao", "enable")
+  msg.post(".", "disable")
+  gui.set_color(gui.get_node("botoes"), vmath.vector4(1, 1, 1, 0))
+  return true
+end
+
+local function configuracoes()
+  sound.stop(CONFIGURACOES_SOUND)
+  msg.post("/Configuracoes#Configuracoes", "enable")
+  msg.post(".", "disable")
+  gui.set_color(gui.get_node("botoes"), vmath.vector4(1, 1, 1, 0))
+  return true
+end
+
+local function sair()
+  msg.post("@system:", "exit", {code = 0})
+end
+
+function on_message(self, message_id)
+  if message_id == hash("enable") then
+    play(RESUMIR_SOUND)
+    msg.post(".", "acquire_input_focus")
+
+    gui.animate(gui.get_node("botoes"), "color", vmath.vector4(1, 1, 1, 1), gui.EASING_LINEAR, 0.4, 0)
+  end
+end
+
+function init(self)
+  gui.set_color(gui.get_node("botoes"), vmath.vector4(1, 1, 1, 0))
+
+  RESUMIR = gui.get_node("resumir/box")
+  SELECAO = gui.get_node("novo/box")
+  CONFIGURACOES = gui.get_node("configuracoes/box")
+  SAIR = gui.get_node("sair/box")
+  
+  RESUMIR_SOUND = msg.url("/menu_inicial#resumir_jogo")
+  SELECAO_SOUND = msg.url("/menu_inicial#selecao")
+  CONFIGURACOES_SOUND = msg.url("/menu_inicial#configuracoes")
+  SAIR_SOUND = msg.url("/menu_inicial#sair")
+
+  menu.first_time_menu(RESUMIR)
+
+  play(RESUMIR_SOUND)
+  gui.animate(gui.get_node("botoes"), "color", vmath.vector4(1, 1, 1, 1), gui.EASING_LINEAR, 0.4, 0, function ()
+    msg.post(".", "acquire_input_focus")
+  end)
+end
+
+function on_input(self, action_id, action)
+  if (action_id ~= hash("clique") and action_id ~= nil) and action.pressed or action.released then    
+    selecao, pressionado = menu.key_move(selecao, pressionado, action_id, action,
+                            {continuar_jogo, selecao_fases, configuracoes, sair}, 
+                            {RESUMIR, SELECAO, CONFIGURACOES, SAIR},
+                            {RESUMIR_SOUND, SELECAO_SOUND, CONFIGURACOES_SOUND, SAIR_SOUND})
+  end
+end

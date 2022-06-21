@@ -1,0 +1,123 @@
+require("main.Modulos.general")
+require("main.Modulos.serialize")
+
+local selecao = 1
+local pressionado = false
+local my_sender = "none"
+local voz_ativada = true
+
+local VOLUME_SOUND
+local VELOCIDADE_SOUND 
+local VOZES_SOUND 
+local VOLTAR_SOUND 
+
+local VOLUME 
+local VELOCIDADE 
+local VOZES 
+local VOLTAR 
+
+local function mudar_volume()
+  sound.stop(VOLUME_SOUND)
+
+  local t = ser.load("config")
+
+  if t.volume == 3 then
+    t.volume = 1
+  else
+    t.volume = t.volume + 0.25
+  end
+
+  ser.save(t, "config")
+
+  text = gui.get_node("volume/text")
+  gui.set_text(text, "Volume: " .. t.volume)
+
+  play(VOLUME_SOUND)
+end
+
+local function mudar_velocidade()
+  sound.stop(VELOCIDADE_SOUND)
+
+  local t = ser.load("config")
+
+  if t.velocidade == 2 then
+    t.velocidade = 1
+  else
+    t.velocidade = t.velocidade + 0.25
+  end
+
+  ser.save(t, "config")
+
+  text = gui.get_node("velocidade/text")
+  gui.set_text(text, "Velocidade: " .. t.velocidade)
+
+  play(VELOCIDADE_SOUND)
+end
+
+local function voz()
+  text = gui.get_node("vozes/text")
+  voz_ativada = not voz_ativada
+
+  if voz_ativada then
+    gui.set_text(text, "Voz: feminina")
+    sound.stop("/configuracoes#voz_masculina")
+    play("/configuracoes#voz_feminina")
+  else
+    gui.set_text(text, "Voz: masculina")
+    sound.stop("/configuracoes#voz_feminina")
+    play("/configuracoes#voz_masculina")
+  end
+end
+
+local function voltar()
+  sound.stop(VOLTAR_SOUND)
+  msg.post(my_sender, "enable")
+  msg.post(".", "disable")
+  gui.set_color(gui.get_node("botoes"), vmath.vector4(1, 1, 1, 0))
+  return true
+end
+
+function init(self)
+  gui.set_color(gui.get_node("botoes"), vmath.vector4(1, 1, 1, 0))
+
+  local t = ser.load("config")
+  
+  VOLUME_SOUND = msg.url("/configuracoes#volume")
+  VELOCIDADE_SOUND = msg.url("/configuracoes#velocidade")
+  VOLTAR_SOUND = msg.url("/configuracoes#voltar")
+
+  VOLUME = gui.get_node("volume/box")
+  VELOCIDADE = gui.get_node("velocidade/box")
+  VOZES = gui.get_node("vozes/box")
+  VOLTAR = gui.get_node("voltar/box")
+
+  text = gui.get_node("velocidade/text")
+  gui.set_text(text, "Velocidade: " .. t.velocidade)
+
+  menu.first_time_menu(VOLUME)
+end
+
+function on_message(self, message_id, message, sender)
+  if message_id == hash("enable") then
+    play(VOLUME_SOUND)
+    msg.post(".", "acquire_input_focus")
+    my_sender = sender
+    gui.animate(gui.get_node("botoes"), "color", vmath.vector4(1, 1, 1, 1), gui.EASING_LINEAR, 0.4, 0)
+  end
+end
+
+function on_input(self, action_id, action)
+  if (action_id ~= hash("clique") and action_id ~= nil) and action.pressed or action.released then
+
+    if ser.load("config")["voz_feminina"] == 1 then
+      VOZES_SOUND = msg.url("/configuracoes#voz_masculina")
+    else
+      VOZES_SOUND = msg.url("/configuracoes#voz_feminina")
+    end  
+
+    selecao, pressionado = menu.key_move(selecao, pressionado, action_id, action,
+                            {mudar_volume, mudar_velocidade, voz, voltar}, 
+                            {VOLUME, VELOCIDADE, VOZES, VOLTAR},
+                            {VOLUME_SOUND, VELOCIDADE_SOUND, VOZES_SOUND, VOLTAR_SOUND})
+  end
+end

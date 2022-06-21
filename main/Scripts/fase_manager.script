@@ -1,0 +1,24 @@
+local function onStart(self, fase)
+  self.fase = fase
+  local ensino = "/ensino" .. tostring(fase)
+
+  print(ensino)
+  msg.post(ensino, hash('enable'))
+  
+  -- msg.post('.', msgs.ENSINO_DADO)
+end
+
+local function onEnsinoDado(self)
+  local url = "/desafio" .. tostring(self.fase)
+  print(url)
+  msg.post(url, hash('enable'))
+end
+
+local f_msgs = {
+  [msgs.START] = onStart,
+  [msgs.ENSINO_DADO] = onEnsinoDado,
+}
+
+function on_message(self, message_id, message)
+  f_msgs[message_id](self, message.fase)
+end

@@ -1,0 +1,25 @@
+[bootstrap]
+main_collection = /main/manager.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 960
+height = 640
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = Ensinando às Cegas
+dependencies = 
+
+[sound]
+max_sound_buffers = 256
+max_component_count = 256
+
+[graphics]
+default_texture_min_filter = linear
+default_texture_mag_filter = linear
+

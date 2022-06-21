@@ -1,0 +1,83 @@
+require("main.Modulos.general")
+require("main.Modulos.serialize")
+
+local MENU_INICIAL = msg.url("manager:/manager#menu_inicial")
+local FASE = msg.url("manager:/manager#fase")
+
+local timer_handler
+local run_callback = true
+local audio_to_play = "/manager#intro_audio"
+local DELAY = 3
+
+local function callback()
+  if run_callback then
+    play(audio_to_play, function ()
+      timer_handler = timer.delay(DELAY, false, callback)
+    end)
+  end
+end
+
+local function startTimer()
+  run_callback = true
+  timer_handler = timer.delay(DELAY, false, callback)
+end
+
+local function cancelTimer()
+  run_callback = false
+  timer.cancel(timer_handler)
+  sound.stop(audio_to_play)
+end
+
+function on_message(self, message_id, message, sender)
+  if message_id == hash("proxy_loaded") then
+    msg.post(sender, "init")
+    msg.post(sender, "enable")
+    if sender == FASE then
+      msg.post(urls.FASE, msgs.START, {fase = self.fase})
+    end
+
+  elseif message_id == msgs.LOAD_FASE then
+    self.fase = message.fase or ser.load("config")["fase_atual"]
+    msg.post(MENU_INICIAL, hash("final"))
+    msg.post(MENU_INICIAL, hash("unload"))
+
+    msg.post(FASE, hash('load'))
+
+  elseif message_id == msgs.LOAD_MENU_INICIAL then
+    msg.post(FASE, hash("final"))
+    msg.post(FASE, hash("unload"))
+
+    msg.post(MENU_INICIAL, hash("load"))
+
+  end
+end
+
+local function config()
+  defos.toggle_fullscreen()
+  defos.set_cursor_visible(false)
+  defos.set_cursor_locked(true)
+end
+
+function init(self)
+  -- config()
+  self.intro = ser.load('config').intro
+
+  msg.post(".", "acquire_input_focus")
+  if self.intro == 0 then
+    msg.post(MENU_INICIAL, "load")
+
+  else
+    startTimer()
+
+  end
+end
+
+function on_input(self, action_id, action)
+  if action_id == keys.TYPE and self.intro == 1 then
+    if action.text == ' ' then
+      cancelTimer()
+      self.intro = 0
+      msg.post(MENU_INICIAL, "load")
+    end
+  end
+end
