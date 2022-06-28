@@ -8,12 +8,10 @@ local voz_ativada = true
 
 local VOLUME_SOUND
 local VELOCIDADE_SOUND 
-local VOZES_SOUND 
 local VOLTAR_SOUND 
 
 local VOLUME 
 local VELOCIDADE 
-local VOZES 
 local VOLTAR 
 
 local function mudar_volume()
@@ -54,21 +52,6 @@ local function mudar_velocidade()
   play(VELOCIDADE_SOUND)
 end
 
-local function voz()
-  text = gui.get_node("vozes/text")
-  voz_ativada = not voz_ativada
-
-  if voz_ativada then
-    gui.set_text(text, "Voz: feminina")
-    sound.stop("/configuracoes#voz_masculina")
-    play("/configuracoes#voz_feminina")
-  else
-    gui.set_text(text, "Voz: masculina")
-    sound.stop("/configuracoes#voz_feminina")
-    play("/configuracoes#voz_masculina")
-  end
-end
-
 local function voltar()
   sound.stop(VOLTAR_SOUND)
   msg.post(my_sender, "enable")
@@ -88,7 +71,6 @@ function init(self)
 
   VOLUME = gui.get_node("volume/box")
   VELOCIDADE = gui.get_node("velocidade/box")
-  VOZES = gui.get_node("vozes/box")
   VOLTAR = gui.get_node("voltar/box")
 
   text = gui.get_node("velocidade/text")
@@ -109,15 +91,9 @@ end
 function on_input(self, action_id, action)
   if (action_id ~= hash("clique") and action_id ~= nil) and action.pressed or action.released then
 
-    if ser.load("config")["voz_feminina"] == 1 then
-      VOZES_SOUND = msg.url("/configuracoes#voz_masculina")
-    else
-      VOZES_SOUND = msg.url("/configuracoes#voz_feminina")
-    end  
-
     selecao, pressionado = menu.key_move(selecao, pressionado, action_id, action,
-                            {mudar_volume, mudar_velocidade, voz, voltar}, 
-                            {VOLUME, VELOCIDADE, VOZES, VOLTAR},
-                            {VOLUME_SOUND, VELOCIDADE_SOUND, VOZES_SOUND, VOLTAR_SOUND})
+                            {mudar_volume, mudar_velocidade, voltar}, 
+                            {VOLUME, VELOCIDADE, VOLTAR},
+                            {VOLUME_SOUND, VELOCIDADE_SOUND, VOLTAR_SOUND})
   end
 end
